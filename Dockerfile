@@ -40,3 +40,4 @@ RUN if [ "$DEBUG_TOOLS" = "true" ]; then \
 
 # Copy executable
 COPY --from=builder /go/src/amf/bin/* /usr/local/bin/.
+

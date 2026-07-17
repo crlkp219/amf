@@ -1,3 +1,4 @@
+
 # SPDX-License-Identifier: Apache-2.0
 # Copyright 2023 Canonical Ltd.
 # Copyright 2024 Intel Corporation
@@ -14,22 +15,15 @@ jobs:
     env:
       REGISTRY: ghcr.io
       DOCKER_REGISTRY: ghcr.io/
-      DOCKER_REPOSITORY: crlkp219/
+      DOCKER_REPOSITORY: ios-mcn-core/
       RELEASE_VERSION: 0.3.2.rc1
-      # --- MODIFIED: Added global GOPRIVATE to cover pre-build tool checks ---
-      GOPRIVATE: "github.com/ios-mcn-core/*"
-
+      
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-go@v5
         with:
           go-version-file: 'go.mod'
-
-      # --- MODIFIED: Placed Git configuration immediately after setup-go ---
-      - name: Configure Git for Private Modules
-        run: |
-          git config --global url."https://${{ secrets.MY_GITHUB_TOKEN }}@github.com/".insteadOf "https://github.com/"
 
       - run: echo GIT_SHA_SHORT=$(git rev-parse --short HEAD) >> $GITHUB_ENV
 
@@ -38,18 +32,16 @@ jobs:
           registry: ${{ env.REGISTRY }}
           username: ${{ secrets.GHCRUSER }}
           password: ${{ secrets.GHCRPASS }}
-
       - name: Clean Checksum
         run: go mod tidy
-
       - name: Build Docker image
         env:
           DOCKER_TAG: release-${{ env.RELEASE_VERSION }}
         run: |
-          make docker-build
-
+            make docker-build
       - name: Push Docker image latest to Github
         env:
-          DOCKER_TAG: release-${{ env.RELEASE_VERSION }}
+          DOCKER_TAG: release-${{ env.RELEASE_VERSION }} 
         run: |
-          make docker-push
+          make docker-push 
+
